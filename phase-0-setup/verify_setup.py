@@ -21,6 +21,7 @@ so you can test them without touching the cloud — see ``tests/test_units.py``.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -32,6 +33,18 @@ if str(REPO_ROOT) not in sys.path:
 from autograder import env_checks  # noqa: E402
 
 REPORT_PATH = REPO_ROOT / "submission" / "phase0_report.json"
+
+# Matches the URL forms git prints for a github.com remote, e.g.
+#   https://github.com/owner/repo(.git)(/)     https://user:token@github.com/owner/repo
+#   git@github.com:owner/repo(.git)            ssh://git@github.com/owner/repo(.git)
+# The host must be exactly github.com (or www.github.com), so lookalikes such as
+# notgithub.com or github.com.evil.io are rejected.
+_GITHUB_URL = re.compile(
+    r"^(?:(?:https?|ssh|git)://(?:[^@/\s]+@)?|[^@/\s:]+@)"
+    r"(?:www\.)?github\.com[:/]+"
+    r"([^/\s]+)/([^/\s]+?)(?:\.git)?/*$",
+    re.IGNORECASE,
+)
 
 
 # --------------------------------------------------------------------------- #
@@ -48,10 +61,18 @@ def parse_gcloud_config(raw: str) -> dict:
     Args:
         raw: the raw stdout string from the gcloud command (may be empty).
     """
-    # TODO: parse `raw` as JSON and return {"account": ..., "project": ...}
-    #       from the "core" section. Return empty strings if raw is empty or a
-    #       field is missing.
-    raise NotImplementedError("Phase 0: implement parse_gcloud_config()")
+    empty = {"account": "", "project": ""}
+    if not isinstance(raw, str) or not raw.strip():
+        return empty
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return empty
+    core = data.get("core") if isinstance(data, dict) else None
+    if not isinstance(core, dict):
+        return empty
+    # A value may be missing or null; always hand back plain strings.
+    return {key: str(core.get(key) or "") for key in empty}
 
 
 def parse_repo_slug(remote_url: str) -> str:
@@ -67,9 +88,13 @@ def parse_repo_slug(remote_url: str) -> str:
     Args:
         remote_url: output of ``git remote get-url origin`` (may be empty).
     """
-    # TODO: return "owner/repo" for both the HTTPS and SSH forms shown above.
-    #       Strip any trailing ".git". Return "" if not a github.com URL.
-    raise NotImplementedError("Phase 0: implement parse_repo_slug()")
+    if not isinstance(remote_url, str):
+        return ""
+    match = _GITHUB_URL.match(remote_url.strip())
+    if not match:
+        return ""
+    owner, repo = match.groups()
+    return f"{owner}/{repo}"
 
 
 # --------------------------------------------------------------------------- #

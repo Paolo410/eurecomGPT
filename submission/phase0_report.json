@@ -1,0 +1,24 @@
+{
+  "phase": "0",
+  "environment": {
+    "cloud_shell": false
+  },
+  "python": {
+    "version": "3.12.0",
+    "ok": true
+  },
+  "gcloud": {
+    "account": "paolo.malugani@eurecom.fr",
+    "project": "malugani-eurecomgpt",
+    "error": null
+  },
+  "docker": {
+    "version": "Docker version 29.0.1, build eedd969",
+    "present": true
+  },
+  "git": {
+    "remote": "https://github.com/Paolo410/eurecomGPT.git",
+    "is_github": true,
+    "slug": "Paolo410/eurecomGPT"
+  }
+}
