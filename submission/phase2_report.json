@@ -1,0 +1,30 @@
+{
+  "phase": "2",
+  "environment": {
+    "colab": true
+  },
+  "attention": {
+    "naive_ms": 883.29,
+    "vectorized_ms": 3.107,
+    "speedup": 284.29
+  },
+  "threads": {
+    "1": 2635.261,
+    "2": 1977.5,
+    "4": 2439.35,
+    "8": 2910.995
+  },
+  "devices": {
+    "cpu_ms": 464830.9,
+    "gpu_ms": 12763.8
+  },
+  "training": {
+    "steps": 2000,
+    "final_loss": 1.5099,
+    "param_count": 4935680
+  },
+  "sample": "\nFither as thitty Paus: as bong sentriblainly\nturn her halm backs and humand the hands of\nthem.\n\nLUCIO:\nHow savence? what you comt you?\n\nHY LORD WISLENNE:\nO prettymer, I'll unhink youn you what I\npraye",
+  "model": {
+    "gcs_url": "https://storage.googleapis.com/malugani-eurecomgpt-eurecomgpt/model.safetensors"
+  }
+}
